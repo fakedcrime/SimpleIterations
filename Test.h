@@ -1,0 +1,218 @@
+#pragma once
+#include <iostream>
+#include <cmath>
+
+# define M_PI  3.14159265358979323846
+
+double f1(double x, double y) { //f*
+    return  -exp(pow(sin(M_PI * x * y), 2))*(4*pow(sin(M_PI*x*y), 2)*pow(cos(M_PI * x * y), 2)+2*pow(cos(M_PI * x * y), 2)-2*pow(sin(M_PI * x * y), 2))*(pow((M_PI*x), 2)+pow((M_PI*y), 2));
+}
+double fm(double x, double y) {
+    return abs(pow(x, 2) - 2*y); //|x^2 - 2y|
+}
+double u1(double x, double y) {
+    return exp(pow(sin(M_PI * x * y), 2));
+}
+double mu2(double y) {
+    return  exp(pow(sin(M_PI * 2 * y), 2));//2 + pow(y, 2)/2; //x = 2
+}
+double mu1(double y) {
+    return 1;//exp(pow(sin(M_PI * 0 * y), 2));//pow(y, 2)/2; //x=0
+}
+double mu3(double x) {
+    return 1;//exp(pow(sin(M_PI * x * 0), 2));//pow(x, 2)/2; //y=0
+}
+double mu4(double x) {
+    return  exp(pow(sin(M_PI * x * 1), 2));//pow(x, 2)/2 + 0.5; // y = 1
+}
+
+//double tautest = 0;
+
+double** U(int n, int m, int a, int b, int c, int d)
+{
+    double** u;
+    u = new double* [n + 1];
+    double h = b / (double)n, k = d / (double)m;
+    double* x, * y;
+    x = new double[n + 1];
+    y = new double[m + 1];
+    for (int i = 0; i <= n; i++)
+    {
+
+        u[i] = new double[m + 1];
+
+    }
+
+    for (int i = 0; i <= n; i++)  
+    {
+        x[i] = a + i * h;
+
+    }
+
+    for (int j = 0; j <= m; j++) 
+    {
+        y[j] = c + j * k;
+
+    }
+
+    for (int j = 0; j <= m; j++)            
+    {
+        for (int i = 0; i <= n; i++)
+        {
+            
+            u[i][j] = u1(x[i], y[j]);
+            
+        }
+    }
+
+    return u;
+}
+
+
+double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps, double& Eps_max, int& index, double& temp2, double& MaxF, double& tau, double** u, double& maxR1, double& min, double& max)
+{
+    double** v2;
+
+    double T;
+
+    double h = 2.0 / (double)n, k = 1.0 / (double)m;
+    double h2 = -1.0 / (h * h), k2 = -1.0 / (k * k);
+    double A = -2 * (h2 + k2);
+    double** f;
+    double* x, * y;
+    double** R;
+
+
+    char* buffer = new char[100];
+
+
+    //double maxR1 = 0.0;
+
+
+
+    x = new double[n + 1];
+    y = new double[m + 1];
+    v2 = new double* [n + 1];
+    f = new double* [n + 1];
+
+    R = new double* [n + 1];
+
+    for (int i = 0; i <= n; i++)
+    {
+        v2[i] = new double[m + 1];
+        f[i] = new double[m + 1];
+
+        R[i] = new double[m + 1];
+    }
+
+    for (int i = 0; i <= n; i++)
+    {
+        x[i] = a + i * h;
+
+    }
+
+    for (int j = 0; j <= m; j++)
+    {
+        y[j] = c + j * k;
+
+    }
+
+    for (int j = 0; j <= m; j++)
+    {
+        for (int i = 0; i <= n; i++)
+        {
+            f[i][j] = f1(x[i], y[j]);
+
+            if (std::abs(f[i][j]) > MaxF) MaxF = std::abs(f[i][j]);
+            R[i][j] = 0;
+        }
+    }
+
+
+
+    for (int j = 0; j <= m; j++)
+    {
+        v2[0][j] = mu1(y[j]);
+        v2[n][j] = mu2(y[j]);
+    }
+
+    for (int i = 0; i <= n; i++)
+    {
+        v2[i][0] = mu3(x[i]);
+        v2[i][m] = mu4(x[i]);
+    }
+
+    for (int j = 1; j < m; j++)
+    {
+        for (int i = 1; i < n; i++)
+        {
+            v2[i][j] = 0.0;
+        }
+    }
+
+
+    double temp, prev, currentEps;
+
+    double Max, Min;
+
+    Min = -4 * h2 * std::pow(std::sin(M_PI / (2.0 * n)), 2) - 4 * k2 * std::pow(std::sin(M_PI / (2.0 * m)), 2);
+    Max = -4 * h2 * std::pow(std::cos(M_PI / (2.0 * n)), 2) - 4 * k2 * std::pow(std::cos(M_PI / (2.0 * m)), 2);
+    T = 2 / (Min + Max);
+    tau = T;
+    min = Min;
+    max = Max;
+    while (true)
+    {
+
+
+
+
+        for (int j = 1; j < m; j++)
+        {
+            for (int i = 1; i < n; i++)
+            {
+                R[i][j] = A * v2[i][j] + h2 * (v2[i - 1][j] + v2[i + 1][j]) + k2 * (v2[i][j - 1] + v2[i][j + 1]) - f[i][j];
+            }
+        }
+
+        Eps_max = 0.0;
+        for (int j = 1; j < m; j++)
+        {
+            for (int i = 1; i < n; i++)
+            {
+                prev = v2[i][j];
+                temp = prev - T * R[i][j];
+
+                currentEps = std::abs(prev - temp);
+                if (currentEps > Eps_max) { Eps_max = currentEps; };
+                v2[i][j] = temp;
+            }
+        }
+
+
+        index++;
+        if ((Eps_max < Eps) || (index >= N_max))
+            break;
+    }
+
+
+
+    for (int j = 1; j < m; j++)
+    {
+        for (int i = 1; i < n; i++)
+        {
+            temp2 = A * v2[i][j] + h2 * (v2[i - 1][j] + v2[i + 1][j]) + k2 * (v2[i][j - 1] + v2[i][j + 1]) - f[i][j];
+
+
+            if (std::abs(temp2) >= maxR1) maxR1 = std::abs(temp2);
+        }
+    }
+
+    return v2;
+
+}
+
+
+    
+
+    
