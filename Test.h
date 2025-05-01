@@ -8,25 +8,23 @@ double f1(double x, double y) { //f*
     return  -exp(pow(sin(M_PI * x * y), 2))*(4*pow(sin(M_PI*x*y), 2)*pow(cos(M_PI * x * y), 2)+2*pow(cos(M_PI * x * y), 2)-2*pow(sin(M_PI * x * y), 2))*(pow((M_PI*x), 2)+pow((M_PI*y), 2));
 }
 double fm(double x, double y) {
-    return abs(pow(x, 2) - 2*y); //|x^2 - 2y|
+    return abs(pow(x, 2) - 2*y);
 }
 double u1(double x, double y) {
     return exp(pow(sin(M_PI * x * y), 2));
 }
-double mu2(double y) {
-    return  exp(pow(sin(M_PI * 2 * y), 2));//2 + pow(y, 2)/2; //x = 2
-}
 double mu1(double y) {
-    return 1;//exp(pow(sin(M_PI * 0 * y), 2));//pow(y, 2)/2; //x=0
+    return 1;
+}
+double mu2(double y) {
+    return  exp(pow(sin(M_PI * 2 * y), 2));
 }
 double mu3(double x) {
-    return 1;//exp(pow(sin(M_PI * x * 0), 2));//pow(x, 2)/2; //y=0
+    return 1;
 }
 double mu4(double x) {
-    return  exp(pow(sin(M_PI * x * 1), 2));//pow(x, 2)/2 + 0.5; // y = 1
+    return  exp(pow(sin(M_PI * x * 1), 2));
 }
-
-//double tautest = 0;
 
 double** U(int n, int m, int a, int b, int c, int d)
 {
@@ -82,13 +80,7 @@ double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps
     double* x, * y;
     double** R;
 
-
     char* buffer = new char[100];
-
-
-    //double maxR1 = 0.0;
-
-
 
     x = new double[n + 1];
     y = new double[m + 1];
@@ -128,8 +120,6 @@ double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps
         }
     }
 
-
-
     for (int j = 0; j <= m; j++)
     {
         v2[0][j] = mu1(y[j]);
@@ -150,11 +140,10 @@ double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps
         }
     }
 
-
     double temp, prev, currentEps;
 
     double Max, Min;
-
+    // Расчет оптимального значения tau
     Min = -4 * h2 * std::pow(std::sin(M_PI / (2.0 * n)), 2) - 4 * k2 * std::pow(std::sin(M_PI / (2.0 * m)), 2);
     Max = -4 * h2 * std::pow(std::cos(M_PI / (2.0 * n)), 2) - 4 * k2 * std::pow(std::cos(M_PI / (2.0 * m)), 2);
     T = 2 / (Min + Max);
@@ -163,10 +152,6 @@ double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps
     max = Max;
     while (true)
     {
-
-
-
-
         for (int j = 1; j < m; j++)
         {
             for (int i = 1; i < n; i++)
@@ -195,8 +180,6 @@ double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps
             break;
     }
 
-
-
     for (int j = 1; j < m; j++)
     {
         for (int i = 1; i < n; i++)
@@ -211,8 +194,3 @@ double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps
     return v2;
 
 }
-
-
-    
-
-    

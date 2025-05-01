@@ -4,6 +4,18 @@
 
 # define M_PI  3.14159265358979323846
 
+// Вариант 7
+// a=0
+// b=2
+// c=0
+// d=1
+// u*=exp(sin(pi*xy)^2
+// f=|x^2-2y|
+// mu1=sin(pi*y)^2
+// mu2=sin(2pi*y)^2
+// mu3=sin(pi*x)^2
+// mu4=sin(2pi*x)^2
+
 double f2(double x, double y)
 {
     return abs(pow(x, 2) - 2 * y);
@@ -34,8 +46,6 @@ double q4(double x)
     return pow(sin(2*M_PI * x), 2);
 }
 
-//double tau, tau2 = 0;
-
 double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps,double& Eps_max,int& index,double& temp2,double& MaxF, double& tau, double& maxR1, double& min, double& max)
 {
     double** v2;
@@ -49,13 +59,7 @@ double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps
     double* x, * y; 
     double** R; 
 
-
     char* buffer = new char[100];
-
-   
-    //double maxR1 = 0.0;
-
-
 
     x = new double[n + 1];
     y = new double[m + 1];
@@ -95,8 +99,6 @@ double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps
         }
     }
 
-
-
     for (int j = 0; j <= m; j++)
     {
         v2[0][j] = q1(y[j]);
@@ -130,10 +132,6 @@ double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps
     max = Max;
     while (true)
     {
-
-
-
-
         for (int j = 1; j < m; j++)
         {
             for (int i = 1; i < n; i++)
@@ -162,8 +160,6 @@ double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps
             break;
     }
 
-
-
     for (int j = 1; j < m; j++)
     {
         for (int i = 1; i < n; i++)
@@ -178,7 +174,6 @@ double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps
     return v2;
 
 }
-
   
 double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Eps, double& Eps_max2, int& index2, double& temp22, double& MaxF2, double& tau, double& maxR2, double& min, double& max)
 {
@@ -193,10 +188,6 @@ double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Ep
     double** f_2;
     double* x2, * y2; 
     double** R2; 
-
-    //double maxR2 = 0.0;
-
- 
 
     x2 = new double[n + 1];
     y2 = new double[m + 1];
@@ -236,8 +227,6 @@ double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Ep
         }
     }
 
-
-
     for (int j = 0; j <= m; j++) 
     {
         v22[0][j] = q1(y2[j]);
@@ -259,6 +248,7 @@ double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Ep
     }
 
     double Max, Min;
+    // Расчет оптимального значения tau
     Min = -4 * h2 * std::pow(std::sin(M_PI / (2.0 * n)), 2) - 4 * k2 * std::pow(std::sin(M_PI / (2.0 * m)), 2);
     Max = -4 * h2 * std::pow(std::cos(M_PI / (2.0 * n)), 2) - 4 * k2 * std::pow(std::cos(M_PI / (2.0 * m)), 2);
     T2 = 2 / (Min + Max);
@@ -269,10 +259,6 @@ double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Ep
    
     while (true)
     {
-
-
-
-
         for (int j = 1; j < m; j++)
         {
             for (int i = 1; i < n; i++)
@@ -301,8 +287,6 @@ double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Ep
             break;
     }
 
-    
-
     for (int j = 1; j < m; j++)
     {
         for (int i = 1; i < n; i++)
@@ -314,5 +298,4 @@ double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Ep
         }
     }
     return v22;
-
 }
