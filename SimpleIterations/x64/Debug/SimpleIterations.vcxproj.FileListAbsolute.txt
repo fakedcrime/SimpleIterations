@@ -1,0 +1,6 @@
+C:\Users\user\Desktop\SimpleIterations\SimpleIterations\x64\Debug\SimpleIterations.vcxproj.AssemblyReference.cache
+C:\Users\user\Desktop\SimpleIterations\SimpleIterations\x64\Debug\SimpleIterations.SimpleIterations.resources
+C:\Users\user\Desktop\SimpleIterations\SimpleIterations\x64\Debug\SimpleIterations.vcxproj.GenerateResource.cache
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations\x64\Debug\SimpleIterations.vcxproj.AssemblyReference.cache
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations\x64\Debug\SimpleIterations.SimpleIterations.resources
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations\x64\Debug\SimpleIterations.vcxproj.GenerateResource.cache
