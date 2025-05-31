@@ -18,32 +18,32 @@
 
 double f2(double x, double y)
 {
-    return abs(pow(x, 2) - 2 * y);
+    return -exp(-x * y * y);
 }
 
 double U(double x, double y)
 {
-    return exp(pow(sin(M_PI) * x * y, 2));
+    return sin(M_PI * x * y);
 }
 
 double q1(double y)
 {
-    return pow(sin(M_PI * y), 2);
+    return (y - 2) * (y - 3);
 }
 
 double q2(double y)
 {
-    return pow(sin(2*M_PI*y), 2);
+    return y * (y - 2) * (y - 3);
 }
 
 double q3(double x)
 {
-    return pow(sin(M_PI*x), 2);
+    return (x - 1) * (x - 2);
 }
 
 double q4(double x)
 {
-    return pow(sin(2*M_PI * x), 2);
+    return x * (x - 1) * (x - 2);
 }
 
 double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps,double& Eps_max,int& index,double& temp2,double& MaxF, double& tau, double& maxR1, double& min, double& max)
@@ -52,7 +52,7 @@ double** mpiMain(int n, int m, int a, int b, int c, int d, int N_max, double Eps
 
     double T;
 
-    double h = 2.0 / (double)n, k = 1.0 / (double)m; 
+    double h = 1.0 / (double)n, k = 1.0 / (double)m; 
     double h2 = -1.0 / (h * h), k2 = -1.0 / (k * k);
     double A = -2 * (h2 + k2);
     double** f; 
@@ -182,7 +182,7 @@ double** mpiMain2(int n, int m, int a, int b, int c, int d, int N_max, double Ep
     double T2;
 
 
-    double h = 2.0 / (double)n, k = 1.0 / (double)m;
+    double h = 1.0 / (double)n, k = 1.0 / (double)m;
     double h2 = -1.0 / (h * h), k2 = -1.0 / (k * k);
     double A = -2 * (h2 + k2);
     double** f_2;

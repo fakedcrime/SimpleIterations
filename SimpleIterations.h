@@ -2,7 +2,8 @@
 #include "Test.h"
 #include "mainTask.h"
 #include <chrono>
-
+using namespace System::IO;
+using namespace System::Globalization;
 
 namespace SimpleIterations {
 
@@ -363,37 +364,37 @@ namespace SimpleIterations {
 		double MaxF = 0.0;
 		double MaxR1 = 0.0;
 		for (int i = 0; i < N + 1; i++) {
-			dataGridView2->Rows[0]->Cells[i + 2]->Value = 2 * i * 1.0 / N;
+			dataGridView2->Rows[0]->Cells[i + 2]->Value = 1 + (i * 1.0) / N;
 			dataGridView2->Rows[1]->Cells[i + 2]->Value = i;
 		}
 		for (int j = 0; j < M + 1; j++) {
-			dataGridView2->Rows[j + 2]->Cells[0]->Value = j * 1.0 / M;
+			dataGridView2->Rows[j + 2]->Cells[0]->Value = 2 + j * 1.0 / M;
 			dataGridView2->Rows[j + 2]->Cells[1]->Value = j;
 		}
 		dataGridView2->Rows[0]->Cells[1]->Value = gcnew String("x");
 		dataGridView2->Rows[1]->Cells[0]->Value = gcnew String("y");
 		dataGridView2->Rows[1]->Cells[1]->Value = gcnew String("j/i");
 		for (int i = 0; i < N + 1; i++) {
-			dataGridView1->Rows[0]->Cells[i + 2]->Value = 2 * i * 1.0 / N;
+			dataGridView1->Rows[0]->Cells[i + 2]->Value = 1 + (i * 1.0) / N;
 			dataGridView1->Rows[1]->Cells[i + 2]->Value = i;
 		}
 		for (int j = 0; j < M + 1; j++) {
-			dataGridView1->Rows[j + 2]->Cells[0]->Value = j * 1.0 / M;
+			dataGridView1->Rows[j + 2]->Cells[0]->Value = 2 + j * 1.0 / M;
 			dataGridView1->Rows[j + 2]->Cells[1]->Value = j;
 		}
 		dataGridView1->Rows[0]->Cells[1]->Value = gcnew String("x");
 		dataGridView1->Rows[1]->Cells[0]->Value = gcnew String("y");
 		dataGridView1->Rows[1]->Cells[1]->Value = gcnew String("j/i");
-		double** f1 = U(N, M, 0, 2, 0, 1);
+		double** f1 = U(N, M, 1, 2, 2, 3);
 		for (int i = 0; i < N + 1; i++) {
 			for (int j = 0; j < M + 1; j++) {
 				dataGridView2->Rows[j + 2]->Cells[i + 2]->Value = floor(f1[i][j] * 1000) / 1000;
-				double xPoint = 2 * i * 1.0 / N;
-				double yPoint = j * 1.0 / M;
+				//double xPoint = 2 * i * 1.0 / N;
+				//double yPoint = j * 1.0 / M;
 			}
 		}
 		double lambda1 = 0.0, lambdan = 0.0;
-		double** v = mpiTest(N, M, 0, 2, 0, 1, Nmax, eps, Eps_max, index, temp2, MaxF, tau, f1, MaxR1, lambda1, lambdan);
+		double** v = mpiTest(N, M, 1, 2, 2, 3, Nmax, eps, Eps_max, index, temp2, MaxF, tau, f1, MaxR1, lambda1, lambdan);
 		for (int i = 0; i < N + 1; i++) {
 			for (int j = 0; j < M + 1; j++) {
 				dataGridView1->Rows[j + 2]->Cells[i + 2]->Value = floor(v[i][j] * 1000) / 1000;
@@ -405,11 +406,11 @@ namespace SimpleIterations {
 		dataGridView3->ColumnCount = N + 3;
 		dataGridView3->RowCount = M + 3;
 		for (int i = 0; i < N + 1; i++) {
-			dataGridView3->Rows[0]->Cells[i + 2]->Value = 2 * i * 1.0 / N;
+			dataGridView3->Rows[0]->Cells[i + 2]->Value = 1 + (i * 1.0) / N;
 			dataGridView3->Rows[1]->Cells[i + 2]->Value = i;
 		}
 		for (int j = 0; j < M + 1; j++) {
-			dataGridView3->Rows[j + 2]->Cells[0]->Value = j * 1.0 / M;
+			dataGridView3->Rows[j + 2]->Cells[0]->Value = 2 + j * 1.0 / M;
 			dataGridView3->Rows[j + 2]->Cells[1]->Value = j;
 		}
 		dataGridView3->Rows[0]->Cells[1]->Value = gcnew String("x");
@@ -442,7 +443,36 @@ namespace SimpleIterations {
 			"\n Невязка СЛАУ на нач. приближении: " + System::Convert::ToString(MaxF) +
 			"\n Невязка СЛАУ на выходе: " + System::Convert::ToString(MaxR1) +
 			"\n Число обусловленности: " + System::Convert::ToString(lambdan / lambda1);
+		// Запись результатов в файл для тестовой задачи
+		try {
+			StreamWriter^ sw = gcnew StreamWriter("table_output.txt");
+			sw->WriteLine("TEST");
+			// Заголовки с точным выравниванием
+			sw->WriteLine("x        y           Numerical Solution       Exact Solution         Difference");
 
+			String^ format = "F15";
+			String^ xFormat = "F6";
+			String^ yFormat = "F6";
+
+			for (int i = 0; i < N + 1; i++) {
+				for (int j = 0; j < M + 1; j++) {
+					double x = 2 * i * 1.0 / N;
+					double y = j * 1.0 / M;
+					double numSol = v[i][j];
+					double exactSol = f1[i][j];
+					double diff = abs(numSol - exactSol);
+
+					sw->Write(String::Format(CultureInfo::InvariantCulture,
+						"{0,-10:F6} {1,-10:F6} {2,-18:F15} {3,-18:F15} {4,-18:F15}\n",
+						x, y, numSol, exactSol, diff));
+				}
+			}
+			sw->Close();
+			system("cmd /c \"python phaseport.py & pause\"");
+		}
+		catch (Exception^ e) {
+			label1->Text = label1->Text + "\nОшибка записи в файл: " + e->Message;
+		}
 
 	}
 	private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -480,18 +510,18 @@ namespace SimpleIterations {
 		double temp22 = 0.0;
 		double MaxF2 = 0.0;
 		for (int i = 0; i < 2 * N + 1; i++) {
-			dataGridView1->Rows[0]->Cells[i + 2]->Value = 2 * i * 1.0 / (2 * N);
+			dataGridView1->Rows[0]->Cells[i + 2]->Value = 1 + (i * 1.0) / (2 * N);
 			dataGridView1->Rows[1]->Cells[i + 2]->Value = i;
 		}
 		for (int j = 0; j < 2 * M + 1; j++) {
-			dataGridView1->Rows[j + 2]->Cells[0]->Value = j * 1.0 / (2 * M);
+			dataGridView1->Rows[j + 2]->Cells[0]->Value = 2 + j * 1.0 / (2 * M);
 			dataGridView1->Rows[j + 2]->Cells[1]->Value = j;
 		}
 		dataGridView1->Rows[0]->Cells[1]->Value = gcnew String("x");
 		dataGridView1->Rows[1]->Cells[0]->Value = gcnew String("y");
 		dataGridView1->Rows[1]->Cells[1]->Value = gcnew String("j/i");
 		double lambda11 = 0.0, lambdann = 0.0;
-		double** v22 = mpiMain2(2 * N, 2 * M, 0, 2, 0, 1, Nmax, eps, Eps_max2, index2, temp22, MaxF2, tauv22, MaxR2, lambda11, lambdann);
+		double** v22 = mpiMain2(2 * N, 2 * M, 1, 2, 2, 3, Nmax, eps, Eps_max2, index2, temp22, MaxF2, tauv22, MaxR2, lambda11, lambdann);
 		for (int i = 0; i < 2 * N + 1; i++) {
 			for (int j = 0; j < 2 * M + 1; j++) {
 				dataGridView1->Rows[j + 2]->Cells[i + 2]->Value = floor(v22[i][j] * 1000) / 1000;
@@ -504,18 +534,18 @@ namespace SimpleIterations {
 		double temp2 = 0.0;
 		double MaxF = 0.0;
 		for (int i = 0; i < N + 1; i++) {
-			dataGridView2->Rows[0]->Cells[i + 2]->Value = 2 * i * 1.0 / N;
+			dataGridView2->Rows[0]->Cells[i + 2]->Value = 1 + (i * 1.0) / N;
 			dataGridView2->Rows[1]->Cells[i + 2]->Value = i;
 		}
 		for (int j = 0; j < M + 1; j++) {
-			dataGridView2->Rows[j + 2]->Cells[0]->Value = j * 1.0 / M;
+			dataGridView2->Rows[j + 2]->Cells[0]->Value = 2 + j * 1.0 / M;
 			dataGridView2->Rows[j + 2]->Cells[1]->Value = j;
 		}
 		dataGridView2->Rows[0]->Cells[1]->Value = gcnew String("x");
 		dataGridView2->Rows[1]->Cells[0]->Value = gcnew String("y");
 		dataGridView2->Rows[1]->Cells[1]->Value = gcnew String("j/i");
 		double lambda1 = 0.0, lambdan = 0.0;
-		double** v2 = mpiMain(N, M, 0, 2, 0, 1, Nmax, eps, Eps_max, index, temp2, MaxF, tauv2, MaxR1, lambda1, lambdan);
+		double** v2 = mpiMain(N, M, 1, 2, 2, 3, Nmax, eps, Eps_max, index, temp2, MaxF, tauv2, MaxR1, lambda1, lambdan);
 		for (int i = 0; i < N + 1; i++) {
 			for (int j = 0; j < M + 1; j++) {
 				dataGridView2->Rows[j + 2]->Cells[i + 2]->Value = floor(v2[i][j] * 1000) / 1000;
@@ -527,11 +557,11 @@ namespace SimpleIterations {
 		dataGridView3->ColumnCount = N + 3;
 		dataGridView3->RowCount = M + 3;
 		for (int i = 0; i < N + 1; i++) {
-			dataGridView3->Rows[0]->Cells[i + 2]->Value = 2 * i * 1.0 / N;
+			dataGridView3->Rows[0]->Cells[i + 2]->Value = 1 + (i * 1.0) / N;
 			dataGridView3->Rows[1]->Cells[i + 2]->Value = i;
 		}
 		for (int j = 0; j < M + 1; j++) {
-			dataGridView3->Rows[j + 2]->Cells[0]->Value = j * 1.0 / M;
+			dataGridView3->Rows[j + 2]->Cells[0]->Value = 2 + j * 1.0 / M;
 			dataGridView3->Rows[j + 2]->Cells[1]->Value = j;
 		}
 		dataGridView3->Rows[0]->Cells[1]->Value = gcnew String("x");
@@ -568,6 +598,36 @@ namespace SimpleIterations {
 			"\n Невязка СЛАУ на выходе: v2 " + System::Convert::ToString(MaxR1) +
 			"\n Невязка СЛАУ на выходе: v22 " + System::Convert::ToString(MaxR2) +
 			"\n Число обусловленности: " + System::Convert::ToString(lambdann / lambda11);
+		// Запись результатов в файл для основной задачи
+		try {
+			StreamWriter^ sw = gcnew StreamWriter("table_output.txt");
+			sw->WriteLine("MAIN");
+			// Заголовки с точным выравниванием
+			sw->WriteLine("x       y           Numerical Solution   HalfStep Solution  Difference");
+
+			String^ format = "F15";
+			String^ xFormat = "F6";
+			String^ yFormat = "F6";
+
+			for (int i = 0; i < N + 1; i++) {
+				for (int j = 0; j < M + 1; j++) {
+					double x = 2 * i * 1.0 / N;
+					double y = j * 1.0 / M;
+					double numSol = v2[i][j];
+					double halfStepSol = v22[2 * i][2 * j];
+					double diff = abs(numSol - halfStepSol);
+
+					sw->Write(String::Format(CultureInfo::InvariantCulture,
+						"{0,-10:F6} {1,-10:F6} {2,-18:F15} {3,-18:F15} {4,-18:F15}\n",
+						x, y, numSol, halfStepSol, diff));
+				}
+			}
+			sw->Close();
+			system("cmd /c \"python phaseport.py & pause\"");
+		}
+		catch (Exception^ e) {
+			label1->Text = label1->Text + "\nОшибка записи в файл: " + e->Message;
+		}
 	}
 	private: System::Void dataGridView1_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
 	}

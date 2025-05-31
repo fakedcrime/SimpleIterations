@@ -5,32 +5,32 @@
 # define M_PI  3.14159265358979323846
 
 double f1(double x, double y) { //f*
-    return  -exp(pow(sin(M_PI * x * y), 2))*(4*pow(sin(M_PI*x*y), 2)*pow(cos(M_PI * x * y), 2)+2*pow(cos(M_PI * x * y), 2)-2*pow(sin(M_PI * x * y), 2))*(pow((M_PI*x), 2)+pow((M_PI*y), 2));
+    return  M_PI * M_PI * (x * x + y * y) * sin(M_PI * x * y);
 }
 double fm(double x, double y) {
-    return abs(pow(x, 2) - 2*y);
+    return -exp(-x * y * y);
 }
 double u1(double x, double y) {
-    return exp(pow(sin(M_PI * x * y), 2));
+    return sin(M_PI * x * y);
 }
 double mu1(double y) {
-    return 1;
+    return sin(M_PI * y);
 }
 double mu2(double y) {
-    return  exp(pow(sin(M_PI * 2 * y), 2));
+    return  sin(M_PI * 2 * y);
 }
 double mu3(double x) {
-    return 1;
+    return sin(M_PI * 2 * x);
 }
 double mu4(double x) {
-    return  exp(pow(sin(M_PI * x * 1), 2));
+    return  sin(M_PI * 3 * x);
 }
 
 double** U(int n, int m, int a, int b, int c, int d)
 {
     double** u;
     u = new double* [n + 1];
-    double h = b / (double)n, k = d / (double)m;
+    double h = (b-a) / (double)n, k = (d-c) / (double)m;
     double* x, * y;
     x = new double[n + 1];
     y = new double[m + 1];
@@ -73,7 +73,7 @@ double** mpiTest(int n, int m, int a, int b, int c, int d, int N_max, double Eps
 
     double T;
 
-    double h = 2.0 / (double)n, k = 1.0 / (double)m;
+    double h = 1.0 / (double)n, k = 1.0 / (double)m;
     double h2 = -1.0 / (h * h), k2 = -1.0 / (k * k);
     double A = -2 * (h2 + k2);
     double** f;
