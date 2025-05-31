@@ -745,8 +745,8 @@ namespace SimpleIterations {
 				dataGridView3->Rows[j + 2]->Cells[i + 2]->Value = z;
 				if (z > max) {
 					max = z;
-					x = 2 * i * 1.0 / N;
-					y = j * 1.0 / M;
+					x = 3 + (i * 1.0) / N;
+					y = 1 + j * 1.0 / M;
 				}
 			}
 		}
