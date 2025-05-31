@@ -1,0 +1,16 @@
+﻿  SimpleIterations.cpp
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations.h(341,12): warning C4244: инициализация: преобразование "__int64" в "int", возможна потеря данных
+  (компиляция исходного файла "SimpleIterations.cpp")
+  
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations.h(481,9): warning C4244: инициализация: преобразование "__int64" в "int", возможна потеря данных
+  (компиляция исходного файла "SimpleIterations.cpp")
+  
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations.h(482,9): warning C4244: инициализация: преобразование "__int64" в "int", возможна потеря данных
+  (компиляция исходного файла "SimpleIterations.cpp")
+  
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations.h(484,12): warning C4244: инициализация: преобразование "__int64" в "int", возможна потеря данных
+  (компиляция исходного файла "SimpleIterations.cpp")
+  
+C:\Users\user\Desktop\SimpleIterations (4 var)\SimpleIterations.cpp(8,6): warning C4829: Возможно, неправильные параметры функции main. Рекомендуемый вариант - "int main(Platform::Array<Platform::String^>^ argv)"
+  SimpleIterations.obj : обнаружен модуль MSIL; для MSIL последовательная компоновка отключена; выполняется полная компоновка
+  SimpleIterations.vcxproj -> C:\Users\user\Desktop\SimpleIterations (4 var)\x64\Debug\SimpleIterations.exe
