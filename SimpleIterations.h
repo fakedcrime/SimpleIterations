@@ -53,6 +53,7 @@ namespace SimpleIterations {
 	private: System::Windows::Forms::Button^ maintask;
 	private: System::Windows::Forms::Button^ testtask;
 	private: System::Windows::Forms::TabControl^ tabControl1;
+	private: System::Windows::Forms::Button^ button1;
 	private:
 		/// <summary>
 		/// Обязательная переменная конструктора.
@@ -85,6 +86,7 @@ namespace SimpleIterations {
 			this->maintask = (gcnew System::Windows::Forms::Button());
 			this->testtask = (gcnew System::Windows::Forms::Button());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->tabPage4->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView3))->BeginInit();
 			this->tabPage3->SuspendLayout();
@@ -168,6 +170,7 @@ namespace SimpleIterations {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->button1);
 			this->tabPage1->Controls->Add(this->textBox4);
 			this->tabPage1->Controls->Add(this->textBox3);
 			this->tabPage1->Controls->Add(this->textBox2);
@@ -307,6 +310,16 @@ namespace SimpleIterations {
 			this->tabControl1->Size = System::Drawing::Size(1377, 614);
 			this->tabControl1->TabIndex = 0;
 			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(22, 293);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(129, 38);
+			this->button1->TabIndex = 12;
+			this->button1->Text = L"Эксперимент";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click_1);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -339,8 +352,6 @@ namespace SimpleIterations {
 		int M = System::Convert::ToInt32(textBox2->Text);
 		double eps = Convert::ToDouble(textBox3->Text);
 		int Nmax = System::Convert::ToInt64(textBox4->Text);
-		//double tau = Convert::ToDouble(textBox5->Text);
-		//int K = System::Convert::ToInt64(textBox5->Text);
 		double tau = 0.0;
 		dataGridView1->Rows->Clear();
 		dataGridView1->Columns->Clear();
@@ -521,12 +532,14 @@ namespace SimpleIterations {
 		dataGridView1->Rows[1]->Cells[0]->Value = gcnew String("y");
 		dataGridView1->Rows[1]->Cells[1]->Value = gcnew String("j/i");
 		double lambda11 = 0.0, lambdann = 0.0;
+		double puasson2 = 0.0;
 		double** v22 = mpiMain2(2 * N, 2 * M, 1, 2, 2, 3, Nmax, eps, Eps_max2, index2, temp22, MaxF2, tauv22, MaxR2, lambda11, lambdann);
 		for (int i = 0; i < 2 * N + 1; i++) {
 			for (int j = 0; j < 2 * M + 1; j++) {
 				dataGridView1->Rows[j + 2]->Cells[i + 2]->Value = floor(v22[i][j] * 1000) / 1000;
 				double xPoint = 2 * i * 1.0 / N;
 				double yPoint = j * 1.0 / M;
+
 			}
 		}
 		double Eps_max = 0.0;
@@ -640,5 +653,146 @@ namespace SimpleIterations {
 	private: System::Void dataGridView3_ColumnAdded(System::Object^ sender, System::Windows::Forms::DataGridViewColumnEventArgs^ e) {
 		e->Column->FillWeight = 1;
 	}
-	};
+	private: System::Void button1_Click_1(System::Object^ sender, System::EventArgs^ e) {
+		const std::clock_t c_start = std::clock();
+		auto t_start = std::chrono::high_resolution_clock::now();
+		int N = System::Convert::ToInt32(textBox1->Text);
+		int M = System::Convert::ToInt32(textBox2->Text);
+		double eps = Convert::ToDouble(textBox3->Text);
+		int Nmax = System::Convert::ToInt64(textBox4->Text);
+		double tau = 0.0;
+		dataGridView1->Rows->Clear();
+		dataGridView1->Columns->Clear();
+		dataGridView1->Refresh();
+		dataGridView1->ColumnCount = N + 3;
+		dataGridView1->RowCount = M + 3;
+		dataGridView1->Columns[0]->DefaultCellStyle->Format = "n2";
+		dataGridView2->Rows->Clear();
+		dataGridView2->Columns->Clear();
+		dataGridView2->Refresh();
+		dataGridView2->ColumnCount = N + 3;
+		dataGridView2->RowCount = M + 3;
+		dataGridView3->Rows->Clear();
+		dataGridView3->Columns->Clear();
+		dataGridView3->Refresh();
+		dataGridView3->ColumnCount = N + 3;
+		dataGridView3->RowCount = M + 3;
+		double Eps_max = 0.0;
+		int index = 0;
+		double temp2 = 0.0;
+		double MaxF = 0.0;
+		double MaxR1 = 0.0;
+		for (int i = 0; i < N + 1; i++) {
+			dataGridView2->Rows[0]->Cells[i + 2]->Value = 3 + (i * 1.0) / N;
+			dataGridView2->Rows[1]->Cells[i + 2]->Value = i;
+		}
+		for (int j = 0; j < M + 1; j++) {
+			dataGridView2->Rows[j + 2]->Cells[0]->Value = 1 + j * 1.0 / M;
+			dataGridView2->Rows[j + 2]->Cells[1]->Value = j;
+		}
+		dataGridView2->Rows[0]->Cells[1]->Value = gcnew String("x");
+		dataGridView2->Rows[1]->Cells[0]->Value = gcnew String("y");
+		dataGridView2->Rows[1]->Cells[1]->Value = gcnew String("j/i");
+		for (int i = 0; i < N + 1; i++) {
+			dataGridView1->Rows[0]->Cells[i + 2]->Value = 3 + (i * 1.0) / N;
+			dataGridView1->Rows[1]->Cells[i + 2]->Value = i;
+		}
+		for (int j = 0; j < M + 1; j++) {
+			dataGridView1->Rows[j + 2]->Cells[0]->Value = 1 + j * 1.0 / M;
+			dataGridView1->Rows[j + 2]->Cells[1]->Value = j;
+		}
+		dataGridView1->Rows[0]->Cells[1]->Value = gcnew String("x");
+		dataGridView1->Rows[1]->Cells[0]->Value = gcnew String("y");
+		dataGridView1->Rows[1]->Cells[1]->Value = gcnew String("j/i");
+		double** f1 = Ux(N, M, 3, 4, 1, 2);
+		for (int i = 0; i < N + 1; i++) {
+			for (int j = 0; j < M + 1; j++) {
+				dataGridView2->Rows[j + 2]->Cells[i + 2]->Value = floor(f1[i][j] * 1000) / 1000;
+				//double xPoint = 2 * i * 1.0 / N;
+				//double yPoint = j * 1.0 / M;
+			}
+		}
+		double lambda1 = 0.0, lambdan = 0.0;
+		double** v = mpiexp(N, M, 3, 4, 1, 2, Nmax, eps, Eps_max, index, temp2, MaxF, tau, f1, MaxR1, lambda1, lambdan);
+		for (int i = 0; i < N + 1; i++) {
+			for (int j = 0; j < M + 1; j++) {
+				dataGridView1->Rows[j + 2]->Cells[i + 2]->Value = floor(v[i][j] * 1000) / 1000;
+			}
+		}
+		dataGridView3->Rows->Clear();
+		dataGridView3->Columns->Clear();
+		dataGridView3->Refresh();
+		dataGridView3->ColumnCount = N + 3;
+		dataGridView3->RowCount = M + 3;
+		for (int i = 0; i < N + 1; i++) {
+			dataGridView3->Rows[0]->Cells[i + 2]->Value = 3 + (i * 1.0) / N;
+			dataGridView3->Rows[1]->Cells[i + 2]->Value = i;
+		}
+		for (int j = 0; j < M + 1; j++) {
+			dataGridView3->Rows[j + 2]->Cells[0]->Value = 1 + j * 1.0 / M;
+			dataGridView3->Rows[j + 2]->Cells[1]->Value = j;
+		}
+		dataGridView3->Rows[0]->Cells[1]->Value = gcnew String("x");
+		dataGridView3->Rows[1]->Cells[0]->Value = gcnew String("y");
+		dataGridView3->Rows[1]->Cells[1]->Value = gcnew String("j/i");
+		double max = 0;
+		double x = 0;
+		double y = 0;
+
+		for (int i = 0; i < N + 1; i++) {
+			for (int j = 0; j < M + 1; j++) {
+				double z = abs(v[i][j] - f1[i][j]);
+				dataGridView3->Rows[j + 2]->Cells[i + 2]->Value = z;
+				if (z > max) {
+					max = z;
+					x = 2 * i * 1.0 / N;
+					y = j * 1.0 / M;
+				}
+			}
+		}
+
+		const std::clock_t c_end = std::clock();
+		const auto t_end = std::chrono::high_resolution_clock::now();
+		label1->Text = "\n Кол-во шагов: " + System::Convert::ToString(index) +
+			"\n Достигнутая точность: " + System::Convert::ToString(Eps_max) +
+			"\n Погрешность решения U-V: " + System::Convert::ToString(max) +
+			"\n Параметр Tau: " + System::Convert::ToString(tau) +
+			"\n Время: " + System::Convert::ToString((c_end - c_start) / CLOCKS_PER_SEC) + "s\n" +
+			"\n Узел с максимальным отклонением: X: " + System::Convert::ToString(x) + "Y: " + System::Convert::ToString(y) +
+			"\n Невязка СЛАУ на нач. приближении: " + System::Convert::ToString(MaxF) +
+			"\n Невязка СЛАУ на выходе: " + System::Convert::ToString(MaxR1) +
+			"\n Число обусловленности: " + System::Convert::ToString(lambdan / lambda1);
+		// Запись результатов в файл для тестовой задачи
+		try {
+			StreamWriter^ sw = gcnew StreamWriter("table_output.txt");
+			sw->WriteLine("TEST");
+			// Заголовки с точным выравниванием
+			sw->WriteLine("x        y           Numerical Solution       Exact Solution         Difference");
+
+			String^ format = "F15";
+			String^ xFormat = "F6";
+			String^ yFormat = "F6";
+
+			for (int i = 0; i < N + 1; i++) {
+				for (int j = 0; j < M + 1; j++) {
+					double x = 3 + (i * 1.0) / N;
+					double y = 1 + j * 1.0 / M;
+					double numSol = v[i][j];
+					double exactSol = f1[i][j];
+					double diff = abs(numSol - exactSol);
+
+					sw->Write(String::Format(CultureInfo::InvariantCulture,
+						"{0,-10:F6} {1,-10:F6} {2,-18:F15} {3,-18:F15} {4,-18:F15}\n",
+						x, y, numSol, exactSol, diff));
+				}
+			}
+			sw->Close();
+			system("cmd /c \"python phaseport.py & pause\"");
+		}
+		catch (Exception^ e) {
+			label1->Text = label1->Text + "\nОшибка записи в файл: " + e->Message;
+		}
+
+	}
+};
 }
